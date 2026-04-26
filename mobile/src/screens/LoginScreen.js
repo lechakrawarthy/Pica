@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import Animated, {
     useSharedValue, useAnimatedStyle,
-    withTiming, withSpring, FadeInDown,
+    withTiming, FadeInDown,
 } from "react-native-reanimated";
 import { FormField } from "../components/FormField";
 import { PrimaryButton } from "../components/PrimaryButton";
@@ -28,8 +28,8 @@ const OAuthButton = ({ label, icon, onPress, delay = 0 }) => {
         <Animated.View entering={FadeInDown.delay(delay).duration(400)}>
             <AnimatedPressable
                 style={[styles.oauthBtn, style]}
-                onPressIn={() => { scale.value = withSpring(0.96, { damping: 12 }); }}
-                onPressOut={() => { scale.value = withSpring(1, { damping: 12 }); }}
+                onPressIn={() => { scale.value = withTiming(0.96, { duration: 80 }); }}
+                onPressOut={() => { scale.value = withTiming(1, { duration: 150 }); }}
                 onPress={onPress}
             >
                 <Text style={styles.oauthIcon}>{icon}</Text>

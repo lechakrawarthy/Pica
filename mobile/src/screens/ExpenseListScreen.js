@@ -10,7 +10,7 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import Animated, {
     useSharedValue, useAnimatedStyle,
-    withSpring, FadeInDown, FadeInRight, Layout,
+    withTiming, FadeInDown, FadeInRight, Layout,
 } from "react-native-reanimated";
 import { ExpenseCard } from "../components/ExpenseCard";
 import { StateView } from "../components/StateView";
@@ -170,8 +170,8 @@ const AddEntryButton = ({ onPress }) => {
     }));
     return (
         <Pressable
-            onPressIn={() => { scale.value = withSpring(0.93, { damping: 10 }); }}
-            onPressOut={() => { scale.value = withSpring(1, { damping: 10 }); }}
+            onPressIn={() => { scale.value = withTiming(0.93, { duration: 80 }); }}
+            onPressOut={() => { scale.value = withTiming(1, { duration: 150 }); }}
             onPress={onPress}
         >
             <Animated.View style={[styles.addBtn, style]}>

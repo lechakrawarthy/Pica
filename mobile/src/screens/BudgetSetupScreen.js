@@ -10,7 +10,6 @@ import {
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
-    withSpring,
     withTiming,
 } from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -54,7 +53,7 @@ export const BudgetSetupScreen = ({ onFinish }) => {
             onStartShouldSetPanResponder: () => true,
             onMoveShouldSetPanResponder: () => true,
             onPanResponderGrant: (e) => {
-                thumbScale.value = withSpring(1.3, { damping: 10 });
+                thumbScale.value = withTiming(1.3, { duration: 80 });
             },
             onPanResponderMove: (e) => {
                 const x = e.nativeEvent.pageX - sliderLeft.current;
@@ -65,7 +64,7 @@ export const BudgetSetupScreen = ({ onFinish }) => {
                 numberScale.value = withTiming(1, { duration: 120 });
             },
             onPanResponderRelease: () => {
-                thumbScale.value = withSpring(1, { damping: 12 });
+                thumbScale.value = withTiming(1, { duration: 150 });
             },
         })
     ).current;
@@ -73,8 +72,8 @@ export const BudgetSetupScreen = ({ onFinish }) => {
     const setPreset = (val) => {
         setBudget(val);
         const pct = (val - MIN) / (MAX - MIN);
-        thumbPos.value = withSpring(pct * SLIDER_W, { damping: 14 });
-        numberScale.value = withSpring(1.08, { damping: 8 });
+        thumbPos.value = withTiming(pct * SLIDER_W, { duration: 200 });
+        numberScale.value = withTiming(1.08, { duration: 80 });
         numberScale.value = withTiming(1, { duration: 200 });
     };
 
@@ -183,8 +182,8 @@ const PresetChip = ({ value, active, onPress }) => {
 
     return (
         <Pressable
-            onPressIn={() => { scale.value = withSpring(0.93, { damping: 12 }); }}
-            onPressOut={() => { scale.value = withSpring(1, { damping: 12 }); }}
+            onPressIn={() => { scale.value = withTiming(0.93, { duration: 80 }); }}
+            onPressOut={() => { scale.value = withTiming(1, { duration: 150 }); }}
             onPress={onPress}
         >
             <Animated.View style={[styles.chip, chipStyle]}>

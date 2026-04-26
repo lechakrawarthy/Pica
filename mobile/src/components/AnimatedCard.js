@@ -1,35 +1,34 @@
 // Pica Editorial — AnimatedCard
-// Reusable press-spring wrapper. Every card in the app gets this feel.
-// Also exports: AnimatedRow, PressablePill, ShimmerPlaceholder
+// Crisp, instant press feedback. No spring wobble — withTiming for snap, not water.
 
 import { Pressable } from "react-native";
 import Animated, {
     useSharedValue, useAnimatedStyle,
-    withSpring, withTiming,
+    withTiming,
 } from "react-native-reanimated";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-// ── Card with spring press-in ─────────────────────────────────────────────────
+// Timing config — instant down, quick release. Feels mechanical, decisive.
+const DOWN = { duration: 80 };
+const UP   = { duration: 150 };
+
+// ── Card press (subtle scale) ─────────────────────────────────────────────────
 export const AnimatedCard = ({ onPress, children, style, disabled }) => {
     const scale = useSharedValue(1);
-    const shadow = useSharedValue(0);
 
     const animStyle = useAnimatedStyle(() => ({
         transform: [{ scale: scale.value }],
-        shadowOpacity: 0.04 + shadow.value * 0.06,
     }));
 
     return (
         <AnimatedPressable
             onPressIn={() => {
                 if (disabled) return;
-                scale.value  = withSpring(0.97, { damping: 14, stiffness: 280 });
-                shadow.value = withTiming(1, { duration: 100 });
+                scale.value = withTiming(0.97, DOWN);
             }}
             onPressOut={() => {
-                scale.value  = withSpring(1, { damping: 14, stiffness: 200 });
-                shadow.value = withTiming(0, { duration: 200 });
+                scale.value = withTiming(1, UP);
             }}
             onPress={disabled ? undefined : onPress}
             style={[animStyle, style]}
@@ -39,17 +38,17 @@ export const AnimatedCard = ({ onPress, children, style, disabled }) => {
     );
 };
 
-// ── Row that highlights on press ──────────────────────────────────────────────
+// ── Row highlight on press ────────────────────────────────────────────────────
 export const AnimatedRow = ({ onPress, children, style }) => {
     const bg = useSharedValue(0);
     const animStyle = useAnimatedStyle(() => ({
-        backgroundColor: `rgba(26,24,20,${bg.value * 0.04})`,
+        backgroundColor: `rgba(26,24,20,${bg.value * 0.05})`,
     }));
 
     return (
         <AnimatedPressable
             onPressIn={() => { bg.value = withTiming(1, { duration: 60 }); }}
-            onPressOut={() => { bg.value = withTiming(0, { duration: 200 }); }}
+            onPressOut={() => { bg.value = withTiming(0, { duration: 180 }); }}
             onPress={onPress}
             style={[animStyle, style]}
         >
@@ -58,7 +57,7 @@ export const AnimatedRow = ({ onPress, children, style }) => {
     );
 };
 
-// ── Pill button with spring ────────────────────────────────────────────────────
+// ── Pill button — crisp scale snap ───────────────────────────────────────────
 export const PressablePill = ({ onPress, children, style }) => {
     const scale = useSharedValue(1);
     const animStyle = useAnimatedStyle(() => ({
@@ -67,8 +66,8 @@ export const PressablePill = ({ onPress, children, style }) => {
 
     return (
         <AnimatedPressable
-            onPressIn={() => { scale.value = withSpring(0.93, { damping: 10, stiffness: 300 }); }}
-            onPressOut={() => { scale.value = withSpring(1, { damping: 12, stiffness: 200 }); }}
+            onPressIn={() => { scale.value = withTiming(0.94, DOWN); }}
+            onPressOut={() => { scale.value = withTiming(1, UP); }}
             onPress={onPress}
             style={[animStyle, style]}
         >

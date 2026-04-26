@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import Animated, {
     useSharedValue, useAnimatedStyle,
-    withTiming, withSpring, FadeInDown,
+    withTiming, FadeInDown,
 } from "react-native-reanimated";
 import { FormField } from "../components/FormField";
 import { PrimaryButton } from "../components/PrimaryButton";
@@ -128,7 +128,7 @@ export const RegisterScreen = ({ navigation }) => {
 const AnimatedStepDot = ({ index, active }) => {
     const width = useSharedValue(active ? 32 : 22);
     const style = useAnimatedStyle(() => ({
-        width: withSpring(width.value, { damping: 14 }),
+        width: withTiming(width.value, { duration: 200 }),
         backgroundColor: active ? colors.ink : colors.line2,
     }));
     return <Animated.View style={[styles.dot, style]} />;

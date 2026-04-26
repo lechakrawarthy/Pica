@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import Animated, {
     useSharedValue, useAnimatedStyle,
-    withSpring, FadeInDown,
+    withTiming, FadeInDown,
 } from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "../context/AuthContext";
@@ -178,8 +178,8 @@ const RowItem = ({ label, value, onPress }) => {
 
     return (
         <Pressable
-            onPressIn={() => { if (onPress) scale.value = withSpring(0.98, { damping: 12 }); }}
-            onPressOut={() => { if (onPress) scale.value = withSpring(1, { damping: 12 }); }}
+            onPressIn={() => { if (onPress) scale.value = withTiming(0.98, { duration: 80 }); }}
+            onPressOut={() => { if (onPress) scale.value = withTiming(1, { duration: 150 }); }}
             onPress={onPress}
         >
             <Animated.View style={[styles.rowItem, style]}>
@@ -201,8 +201,8 @@ const PresetChip = ({ value, active, onPress }) => {
     }));
     return (
         <Pressable
-            onPressIn={() => { scale.value = withSpring(0.92, { damping: 10 }); }}
-            onPressOut={() => { scale.value = withSpring(1, { damping: 10 }); }}
+            onPressIn={() => { scale.value = withTiming(0.93, { duration: 80 }); }}
+            onPressOut={() => { scale.value = withTiming(1, { duration: 150 }); }}
             onPress={onPress}
         >
             <Animated.View style={[styles.presetChip, style]}>

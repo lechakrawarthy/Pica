@@ -11,7 +11,6 @@ import Animated, {
     useSharedValue,
     useAnimatedStyle,
     withTiming,
-    withSpring,
     interpolate,
     useAnimatedScrollHandler,
     runOnJS,
@@ -189,15 +188,15 @@ const DotIndicator = ({ index, scrollX }) => {
 
 // ── Next / Get started button ─────────────────────────────────────────────────
 const NextButton = ({ onPress, isLast }) => {
-    const pressed = useSharedValue(0);
+    const scale = useSharedValue(1);
     const btnStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: withSpring(pressed.value ? 0.92 : 1, { damping: 15 }) }],
+        transform: [{ scale: scale.value }],
     }));
 
     return (
         <Pressable
-            onPressIn={() => { pressed.value = 1; }}
-            onPressOut={() => { pressed.value = 0; }}
+            onPressIn={() => { scale.value = withTiming(0.92, { duration: 80 }); }}
+            onPressOut={() => { scale.value = withTiming(1, { duration: 150 }); }}
             onPress={onPress}
         >
             <Animated.View style={[styles.nextBtn, btnStyle]}>
