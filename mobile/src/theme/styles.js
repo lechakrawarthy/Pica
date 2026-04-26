@@ -2,32 +2,41 @@ import { StyleSheet } from "react-native";
 import { colors } from "./colors";
 
 export const layout = StyleSheet.create({
+    // Root screen — paper background
     screen: {
         flex: 1,
-        backgroundColor: colors.bg,
+        backgroundColor: colors.paper,
+    },
+    // Screen with dark shell background (login, splash)
+    screenDark: {
+        flex: 1,
+        backgroundColor: colors.shell,
     },
     content: {
         flex: 1,
-        paddingHorizontal: 18,
-        paddingTop: 12,
-        paddingBottom: 24,
+        paddingHorizontal: 24,
+        paddingTop: 16,
+        paddingBottom: 32,
     },
-    card: {
-        backgroundColor: colors.surface,
-        borderRadius: 16,
-        padding: 14,
-        borderWidth: 1,
-        borderColor: colors.border,
+    // Thin editorial rule
+    rule: {
+        height: 1,
+        backgroundColor: colors.line,
+        marginVertical: 0,
     },
-    title: {
-        color: colors.text,
-        fontSize: 28,
-        fontWeight: "800",
-        letterSpacing: 0.3,
+    // Section separator
+    section: {
+        paddingVertical: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.line,
     },
-    subtitle: {
-        color: colors.muted,
-        marginTop: 4,
-        fontSize: 14,
+    row: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    spaceBetween: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
     },
 });

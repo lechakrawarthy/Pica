@@ -1,10 +1,12 @@
+// Spendly Editorial — LoginScreen
+// "Welcome back. Pick up where you left off."
+// Paper background, ink form fields, coral CTA.
+
 import { useState } from "react";
-import { View, Text, Alert, StyleSheet, Pressable } from "react-native";
-import { AppHeader } from "../components/AppHeader";
+import { View, Text, ScrollView, Alert, StyleSheet, Pressable, KeyboardAvoidingView, Platform } from "react-native";
 import { FormField } from "../components/FormField";
 import { PrimaryButton } from "../components/PrimaryButton";
 import { useAuth } from "../context/AuthContext";
-import { layout } from "../theme/styles";
 import { colors } from "../theme/colors";
 import { validateAuth } from "../utils/validators";
 
@@ -15,59 +17,212 @@ export const LoginScreen = ({ navigation }) => {
     const [submitting, setSubmitting] = useState(false);
 
     const onSubmit = async () => {
-        const validationError = validateAuth({ email, password }, false);
-        if (validationError) {
-            Alert.alert("Validation", validationError);
-            return;
-        }
-
+        const err = validateAuth({ email, password }, false);
+        if (err) { Alert.alert("Check your details", err); return; }
         try {
             setSubmitting(true);
             await login({ email, password });
-        } catch (error) {
-            Alert.alert("Login Failed", error?.response?.data?.message || "Please try again.");
+        } catch (e) {
+            Alert.alert("Couldn't sign in", e?.response?.data?.message || "Double-check your email and password.");
         } finally {
             setSubmitting(false);
         }
     };
 
     return (
-        <View style={layout.screen}>
-            <View style={layout.content}>
-                <AppHeader title="Welcome Back" subtitle="Track every cent with clarity and control." />
+        <KeyboardAvoidingView
+            style={styles.root}
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+        >
+            <ScrollView
+                contentContainerStyle={styles.scroll}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+            >
+                {/* Brand mark */}
+                <View style={styles.markRow}>
+                    <View style={styles.mark}>
+                        <View style={styles.markDot} />
+                    </View>
+                    <Text style={styles.brandName}>Spendly</Text>
+                </View>
+
+                {/* Hero copy */}
+                <View style={styles.hero}>
+                    <Text style={styles.eyebrow}>— Welcome back</Text>
+                    <Text style={styles.headline}>Your money{"\n"}has been waiting.</Text>
+                    <Text style={styles.subline}>
+                        Pick up where you left off. Every entry still here, just as you left it.
+                    </Text>
+                </View>
+
+                {/* Divider */}
+                <View style={styles.rule} />
+
+                {/* Form */}
                 <View style={styles.form}>
-                    <Text style={styles.formTitle}>Sign in to continue</Text>
-                    <FormField label="Email" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
-                    <FormField label="Password" value={password} onChangeText={setPassword} secureTextEntry />
-                    <PrimaryButton title="Login" onPress={onSubmit} loading={submitting} />
-                    <Pressable onPress={() => navigation.navigate("Register")}>
-                        <Text style={styles.switchLink}>No account? Create one</Text>
+                    <FormField
+                        label="Email address"
+                        value={email}
+                        onChangeText={setEmail}
+                        autoCapitalize="none"
+                        keyboardType="email-address"
+                        placeholder="you@example.com"
+                        returnKeyType="next"
+                    />
+                    <FormField
+                        label="Password"
+                        value={password}
+                        onChangeText={setPassword}
+                        secureTextEntry
+                        placeholder="Your password"
+                        returnKeyType="done"
+                        onSubmitEditing={onSubmit}
+                    />
+                    <Pressable style={styles.forgotRow}>
+                        <Text style={styles.forgotText}>Forgot password?</Text>
                     </Pressable>
                 </View>
-            </View>
-        </View>
+
+                {/* Primary CTA */}
+                <PrimaryButton
+                    title="Sign in"
+                    onPress={onSubmit}
+                    loading={submitting}
+                />
+
+                {/* Switch link */}
+                <View style={styles.switchRow}>
+                    <Text style={styles.switchText}>No account yet?</Text>
+                    <Pressable onPress={() => navigation.navigate("Register")}>
+                        <Text style={styles.switchLink}> Create one</Text>
+                    </Pressable>
+                </View>
+
+                {/* Footer quote */}
+                <Text style={styles.footer}>
+                    "Every rupee, noticed." — Spendly
+                </Text>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 
 const styles = StyleSheet.create({
-    form: {
-        marginTop: 8,
-        backgroundColor: colors.bgSoft,
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: colors.border,
-        padding: 14,
+    root: {
+        flex: 1,
+        backgroundColor: colors.paper,
     },
-    formTitle: {
-        color: colors.text,
-        fontWeight: "700",
-        fontSize: 16,
+    scroll: {
+        flexGrow: 1,
+        paddingHorizontal: 28,
+        paddingTop: 64,
+        paddingBottom: 40,
+    },
+
+    // Brand mark
+    markRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+        marginBottom: 40,
+    },
+    mark: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        borderWidth: 1,
+        borderColor: colors.line3,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    markDot: {
+        width: 5,
+        height: 5,
+        borderRadius: 2.5,
+        backgroundColor: colors.coral,
+    },
+    brandName: {
+        fontSize: 15,
+        fontWeight: "600",
+        color: colors.ink,
+        letterSpacing: -0.2,
+    },
+
+    // Hero
+    hero: {
+        marginBottom: 36,
+    },
+    eyebrow: {
+        fontSize: 11,
+        fontWeight: "600",
+        letterSpacing: 1.2,
+        textTransform: "uppercase",
+        color: colors.coral,
         marginBottom: 12,
     },
+    headline: {
+        fontSize: 34,
+        fontWeight: "300",
+        color: colors.ink,
+        letterSpacing: -1.0,
+        lineHeight: 38,
+        marginBottom: 14,
+    },
+    subline: {
+        fontSize: 14,
+        color: colors.ink3,
+        lineHeight: 22,
+        maxWidth: 300,
+    },
+
+    rule: {
+        height: 1,
+        backgroundColor: colors.line,
+        marginBottom: 32,
+    },
+
+    // Form
+    form: {
+        marginBottom: 8,
+    },
+    forgotRow: {
+        alignSelf: "flex-end",
+        marginTop: -8,
+        marginBottom: 28,
+    },
+    forgotText: {
+        fontSize: 12,
+        color: colors.ink2,
+        textDecorationLine: "underline",
+        letterSpacing: 0.1,
+    },
+
+    // Switch
+    switchRow: {
+        flexDirection: "row",
+        justifyContent: "center",
+        marginTop: 20,
+    },
+    switchText: {
+        fontSize: 13,
+        color: colors.ink3,
+    },
     switchLink: {
-        color: colors.primary,
+        fontSize: 13,
+        color: colors.ink,
+        fontWeight: "600",
+        textDecorationLine: "underline",
+    },
+
+    // Footer
+    footer: {
+        marginTop: 36,
         textAlign: "center",
-        marginTop: 14,
-        fontWeight: "700",
+        fontSize: 11,
+        color: colors.ink3,
+        fontStyle: "italic",
+        letterSpacing: 0.3,
+        lineHeight: 18,
     },
 });
