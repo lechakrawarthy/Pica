@@ -7,29 +7,25 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Animated, {
-    useSharedValue, useAnimatedStyle,
-    withSpring,
-} from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme/colors";
 
 // Screens
-import { SplashScreen }          from "../screens/SplashScreen";
-import { OnboardingScreen }      from "../screens/OnboardingScreen";
-import { BudgetSetupScreen }     from "../screens/BudgetSetupScreen";
-import { LoginScreen }           from "../screens/LoginScreen";
-import { RegisterScreen }        from "../screens/RegisterScreen";
-import { DashboardScreen }       from "../screens/DashboardScreen";
-import { ExpenseListScreen }     from "../screens/ExpenseListScreen";
-import { AddEditExpenseScreen }  from "../screens/AddEditExpenseScreen";
-import { InsightsScreen }        from "../screens/InsightsScreen";
-import { ProfileScreen }         from "../screens/ProfileScreen";
+import { SplashScreen } from "../screens/SplashScreen";
+import { OnboardingScreen } from "../screens/OnboardingScreen";
+import { BudgetSetupScreen } from "../screens/BudgetSetupScreen";
+import { LoginScreen } from "../screens/LoginScreen";
+import { RegisterScreen } from "../screens/RegisterScreen";
+import { DashboardScreen } from "../screens/DashboardScreen";
+import { ExpenseListScreen } from "../screens/ExpenseListScreen";
+import { AddEditExpenseScreen } from "../screens/AddEditExpenseScreen";
+import { InsightsScreen } from "../screens/InsightsScreen";
+import { ProfileScreen } from "../screens/ProfileScreen";
 
-const Stack        = createNativeStackNavigator();
-const AuthStack    = createNativeStackNavigator();
-const Tab          = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+const AuthStack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 const ExpenseStack = createNativeStackNavigator();
 
 // Editorial nav theme
@@ -37,11 +33,11 @@ const navTheme = {
     ...DefaultTheme,
     colors: {
         ...DefaultTheme.colors,
-        background:   colors.paper,
-        card:         colors.paper,
-        text:         colors.ink,
-        border:       colors.line,
-        primary:      colors.coral,
+        background: colors.paper,
+        card: colors.paper,
+        text: colors.ink,
+        border: colors.line,
+        primary: colors.coral,
         notification: colors.coral,
     },
 };
@@ -92,17 +88,10 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
             {state.routes.map((route, index) => {
                 const { options } = descriptors[route.key];
                 const focused = state.index === index;
-                const label   = route.name;
-                const Icon    = TAB_ICONS[label] || HomeIcon;
-
-                const scale = useSharedValue(1);
-                const style = useAnimatedStyle(() => ({
-                    transform: [{ scale: scale.value }],
-                }));
+                const label = route.name;
+                const Icon = TAB_ICONS[label] || HomeIcon;
 
                 const onPress = () => {
-                    scale.value = withSpring(0.88, { damping: 8 });
-                    setTimeout(() => { scale.value = withSpring(1, { damping: 12 }); }, 120);
                     const event = navigation.emit({ type: "tabPress", target: route.key, canPreventDefault: true });
                     if (!focused && !event.defaultPrevented) {
                         navigation.navigate(route.name);
@@ -110,13 +99,13 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
                 };
 
                 return (
-                    <Pressable key={route.key} onPress={onPress} style={tabBar.tab}>
-                        <Animated.View style={[tabBar.tabInner, style]}>
+                    <Pressable key={route.key} onPress={onPress} style={({ pressed }) => [tabBar.tab, pressed && tabBar.tabPressed]}>
+                        <View style={tabBar.tabInner}>
                             <Icon focused={focused} />
                             <Text style={[tabBar.label, focused && tabBar.labelActive]}>
                                 {label}
                             </Text>
-                        </Animated.View>
+                        </View>
                     </Pressable>
                 );
             })}
@@ -142,10 +131,10 @@ const AppTabs = () => (
         tabBar={(props) => <CustomTabBar {...props} />}
         screenOptions={{ headerShown: false }}
     >
-        <Tab.Screen name="Home"     component={DashboardScreen} />
+        <Tab.Screen name="Home" component={DashboardScreen} />
         <Tab.Screen name="Insights" component={InsightsScreen} />
-        <Tab.Screen name="Journal"  component={ExpensesStackNavigator} />
-        <Tab.Screen name="Profile"  component={ProfileScreen} />
+        <Tab.Screen name="Journal" component={ExpensesStackNavigator} />
+        <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
 );
 
@@ -158,7 +147,7 @@ const AuthNavigator = () => (
             animation: "slide_from_right",
         }}
     >
-        <AuthStack.Screen name="Login"    component={LoginScreen} />
+        <AuthStack.Screen name="Login" component={LoginScreen} />
         <AuthStack.Screen name="Register" component={RegisterScreen} />
     </AuthStack.Navigator>
 );
@@ -178,8 +167,13 @@ export const RootNavigator = () => {
     }, [user, loading]);
 
     const onSplashDone = async () => {
-        const seen = await AsyncStorage.getItem("@pica_onboarded").catch(() => null);
-        setStage(seen ? "auth" : "onboarding");
+        try {
+            const seen = await AsyncStorage.getItem("@pica_onboarded");
+            setStage(seen ? "auth" : "onboarding");
+        } catch (error) {
+            // Never block the app on storage errors.
+            setStage("auth");
+        }
     };
 
     const onOnboardingDone = () => {
@@ -187,7 +181,7 @@ export const RootNavigator = () => {
     };
 
     const onBudgetDone = async () => {
-        await AsyncStorage.setItem("@pica_onboarded", "1").catch(() => {});
+        await AsyncStorage.setItem("@pica_onboarded", "1").catch(() => { });
         setStage("auth");
     };
 
@@ -241,6 +235,9 @@ const tabBar = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
+    },
+    tabPressed: {
+        opacity: 0.65,
     },
     tabInner: {
         alignItems: "center",

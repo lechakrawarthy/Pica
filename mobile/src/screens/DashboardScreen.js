@@ -2,13 +2,12 @@
 // Animated balance hero, animated budget bar, staggered category rows.
 // Numbers as literature. Pace tracking. Insight card.
 
-import { useMemo, useEffect, useRef } from "react";
-import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
+import { useMemo, useEffect, useState, useCallback } from "react";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
 import Animated, {
     useSharedValue, useAnimatedStyle,
-    withTiming, withDelay, withSpring,
+    withTiming, withDelay,
     FadeInDown, FadeIn,
     Easing,
 } from "react-native-reanimated";
@@ -29,13 +28,12 @@ export const DashboardScreen = () => {
     const { user } = useAuth();
 
     // Budget from AsyncStorage (set in BudgetSetupScreen)
-    const [budget, setBudgetState] = [20000, () => {}];
+    const [MONTHLY_BUDGET, setMonthlyBudget] = useState(20000);
     useEffect(() => {
         AsyncStorage.getItem("@pica_budget").then((v) => {
-            if (v) setBudgetState(Number(v));
+            if (v) setMonthlyBudget(Number(v));
         }).catch(() => {});
     }, []);
-    const MONTHLY_BUDGET = budget;
 
     useFocusEffect(useCallback(() => { fetchExpenses(); }, []));
 

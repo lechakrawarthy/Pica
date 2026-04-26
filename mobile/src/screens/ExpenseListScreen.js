@@ -2,7 +2,7 @@
 // Chronological entries grouped by date. Staggered FlatList animations.
 // Swipe-feel press states. Every rupee, noticed.
 
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
 import {
     View, Text, FlatList, Pressable, Alert,
     StyleSheet, TouchableOpacity,

@@ -18,7 +18,6 @@ import Animated, {
     FadeIn,
     FadeInDown,
 } from "react-native-reanimated";
-import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "../theme/colors";
 
 const { width: W, height: H } = Dimensions.get("window");
@@ -47,7 +46,7 @@ const SLIDES = [
         chapter: "Chapter three",
         headline: "Insights that\nactually help.",
         body: "See where your money flows most. Track patterns across categories. Pica turns your spending into a monthly narrative — readable, honest, yours.",
-        artColor: colors.plum || "#5E3A5C",
+        artColor: colors.plum,
         symbol: "∿",
         quote: '"spend with intention"',
     },

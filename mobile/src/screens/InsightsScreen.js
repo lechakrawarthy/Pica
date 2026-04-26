@@ -2,10 +2,9 @@
 // Trends, week-over-week, top category, biggest single spend.
 // Pure RN bar charts — no library needed.
 
-import { useMemo } from "react";
+import { useMemo, useEffect, useCallback } from "react";
 import { View, Text, ScrollView, StyleSheet, Dimensions } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
 import Animated, {
     useSharedValue, useAnimatedStyle,
     withDelay, withTiming, FadeInDown, FadeIn,
@@ -205,20 +204,21 @@ export const InsightsScreen = () => {
 
 // ── Animated bar ──────────────────────────────────────────────────────────────
 const DayBar = ({ item, maxVal, index, isToday }) => {
-    const pct      = maxVal > 0 ? item.total / maxVal : 0;
-    const barH     = useSharedValue(0);
-    const MAX_H    = 90;
-    const targetH  = pct * MAX_H;
+    const pct = maxVal > 0 ? item.total / maxVal : 0;
+    const barH = useSharedValue(0);
+    const MAX_H = 90;
+    const targetH = pct * MAX_H;
 
     const barStyle = useAnimatedStyle(() => ({
         height: barH.value,
     }));
 
-    // Trigger animation
-    barH.value = withDelay(
-        index * 70 + 300,
-        withTiming(targetH, { duration: 600, easing: Easing.out(Easing.cubic) })
-    );
+    useEffect(() => {
+        barH.value = withDelay(
+            index * 70 + 300,
+            withTiming(targetH, { duration: 600, easing: Easing.out(Easing.cubic) })
+        );
+    }, [barH, index, targetH]);
 
     return (
         <View style={bStyles.col}>
@@ -244,12 +244,15 @@ const DayBar = ({ item, maxVal, index, isToday }) => {
 
 // ── Animated category row ─────────────────────────────────────────────────────
 const AnimatedCategoryRow = ({ item, index }) => {
-    const barW  = useSharedValue(0);
+    const barW = useSharedValue(0);
     const style = useAnimatedStyle(() => ({ width: `${barW.value}%` }));
-    barW.value = withDelay(
-        320 + index * 80,
-        withTiming(item.pct, { duration: 700, easing: Easing.out(Easing.cubic) })
-    );
+
+    useEffect(() => {
+        barW.value = withDelay(
+            320 + index * 80,
+            withTiming(item.pct, { duration: 700, easing: Easing.out(Easing.cubic) })
+        );
+    }, [barW, index, item.pct]);
 
     return (
         <Animated.View entering={FadeInDown.delay(340 + index * 60).duration(380)} style={cStyles.row}>
@@ -318,10 +321,10 @@ const styles = StyleSheet.create({
         paddingVertical: 6, paddingHorizontal: 12,
         borderRadius: 100, borderWidth: 1,
     },
-    deltaBadgeUp:   { borderColor: colors.coral, backgroundColor: "rgba(232,85,58,0.06)" },
-    deltaBadgeDown: { borderColor: colors.sage,  backgroundColor: "rgba(90,107,74,0.06)" },
+    deltaBadgeUp: { borderColor: colors.coral, backgroundColor: "rgba(232,85,58,0.06)" },
+    deltaBadgeDown: { borderColor: colors.sage, backgroundColor: "rgba(90,107,74,0.06)" },
     deltaText: { fontSize: 12, fontWeight: "700", letterSpacing: 0.3 },
-    deltaUp:   { color: colors.coral },
+    deltaUp: { color: colors.coral },
     deltaDown: { color: colors.sage },
 
     section: { paddingHorizontal: 24, paddingVertical: 20 },

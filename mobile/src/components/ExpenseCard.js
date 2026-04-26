@@ -5,7 +5,7 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { AnimatedRow } from "./AnimatedCard";
 import { colors, getCategoryColor } from "../theme/colors";
-import { formatCurrency, formatDate, formatTime } from "../utils/formatters";
+import { formatCurrency, formatDate } from "../utils/formatters";
 
 export const ExpenseCard = ({ expense, onEdit, onDelete }) => {
     const catColor = getCategoryColor(expense.category);
@@ -79,11 +79,6 @@ const styles = StyleSheet.create({
         paddingVertical: 18,
         borderBottomWidth: 1,
         borderBottomColor: colors.line,
-    },
-    cardPressed: {
-        backgroundColor: colors.paper2,
-        marginHorizontal: -24,
-        paddingHorizontal: 24,
     },
     left: {
         flexDirection: "row",

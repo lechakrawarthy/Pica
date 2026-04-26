@@ -12,28 +12,27 @@ import Animated, {
     withSequence,
     withRepeat,
     Easing,
-    runOnJS,
 } from "react-native-reanimated";
 import { colors } from "../theme/colors";
 
 export const SplashScreen = ({ onFinish }) => {
     // Animation values
-    const markOpacity   = useSharedValue(0);
-    const markScale     = useSharedValue(0.6);
-    const nameOpacity   = useSharedValue(0);
-    const nameY         = useSharedValue(20);
-    const tagOpacity    = useSharedValue(0);
+    const markOpacity = useSharedValue(0);
+    const markScale = useSharedValue(0.6);
+    const nameOpacity = useSharedValue(0);
+    const nameY = useSharedValue(20);
+    const tagOpacity = useSharedValue(0);
     const loaderOpacity = useSharedValue(0);
-    const dotScale      = useSharedValue(1);
+    const dotScale = useSharedValue(1);
 
     useEffect(() => {
         // Mark appears
         markOpacity.value = withTiming(1, { duration: 700, easing: Easing.out(Easing.cubic) });
-        markScale.value   = withTiming(1, { duration: 700, easing: Easing.out(Easing.back(1.3)) });
+        markScale.value = withTiming(1, { duration: 700, easing: Easing.out(Easing.back(1.3)) });
 
         // Name rises
         nameOpacity.value = withDelay(400, withTiming(1, { duration: 600 }));
-        nameY.value       = withDelay(400, withTiming(0, { duration: 600, easing: Easing.out(Easing.cubic) }));
+        nameY.value = withDelay(400, withTiming(0, { duration: 600, easing: Easing.out(Easing.cubic) }));
 
         // Tagline
         tagOpacity.value = withDelay(900, withTiming(1, { duration: 500 }));
@@ -42,8 +41,8 @@ export const SplashScreen = ({ onFinish }) => {
         loaderOpacity.value = withDelay(1100, withTiming(1, { duration: 400 }));
         dotScale.value = withDelay(1100, withRepeat(
             withSequence(
-                withTiming(1.6, { duration: 700, easing: Easing.inOut(Easing.sine) }),
-                withTiming(1.0, { duration: 700, easing: Easing.inOut(Easing.sine) })
+                withTiming(1.6, { duration: 700, easing: Easing.inOut(Easing.sin) }),
+                withTiming(1.0, { duration: 700, easing: Easing.inOut(Easing.sin) })
             ),
             -1,
             false
@@ -51,18 +50,20 @@ export const SplashScreen = ({ onFinish }) => {
 
         // Navigate after 2.8s
         const timer = setTimeout(() => {
-            if (onFinish) runOnJS(onFinish)();
+            if (onFinish) {
+                onFinish();
+            }
         }, 2800);
 
         return () => clearTimeout(timer);
-    }, []);
+    }, [onFinish]);
 
     const markStyle = useAnimatedStyle(() => ({
-        opacity:   markOpacity.value,
+        opacity: markOpacity.value,
         transform: [{ scale: markScale.value }],
     }));
     const nameStyle = useAnimatedStyle(() => ({
-        opacity:   nameOpacity.value,
+        opacity: nameOpacity.value,
         transform: [{ translateY: nameY.value }],
     }));
     const tagStyle = useAnimatedStyle(() => ({

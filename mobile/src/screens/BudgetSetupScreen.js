@@ -12,8 +12,6 @@ import Animated, {
     useAnimatedStyle,
     withSpring,
     withTiming,
-    interpolate,
-    runOnJS,
 } from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { colors } from "../theme/colors";
