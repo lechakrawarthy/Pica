@@ -1,5 +1,43 @@
+# Dependencies
 backend/node_modules
-backend/.env
 mobile/node_modules
+
+# Environment — NEVER commit secrets
+backend/.env
+mobile/.env
+.env
+.env.local
+.env.*.local
+
+# Expo / Metro
 mobile/.expo
 mobile/dist
+mobile/web-build
+mobile/expo-env.d.ts
+
+# Build artifacts
+mobile/android
+mobile/ios
+mobile/.kotlin
+
+# Keys and certificates (NEVER commit these)
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp

@@ -28,7 +28,7 @@ export const SplashScreen = ({ onFinish }) => {
     useEffect(() => {
         // Mark appears
         markOpacity.value = withTiming(1, { duration: 700, easing: Easing.out(Easing.cubic) });
-        markScale.value = withTiming(1, { duration: 700, easing: Easing.out(Easing.back(1.3)) });
+        markScale.value = withTiming(1, { duration: 800, easing: Easing.out(Easing.cubic) });
 
         // Name rises
         nameOpacity.value = withDelay(400, withTiming(1, { duration: 600 }));
@@ -41,8 +41,8 @@ export const SplashScreen = ({ onFinish }) => {
         loaderOpacity.value = withDelay(1100, withTiming(1, { duration: 400 }));
         dotScale.value = withDelay(1100, withRepeat(
             withSequence(
-                withTiming(1.6, { duration: 700, easing: Easing.inOut(Easing.sin) }),
-                withTiming(1.0, { duration: 700, easing: Easing.inOut(Easing.sin) })
+                withTiming(1.6, { duration: 700, easing: Easing.inOut(Easing.quad) }),
+                withTiming(1.0, { duration: 700, easing: Easing.inOut(Easing.quad) })
             ),
             -1,
             false
