@@ -3,6 +3,7 @@
 // amount in tabular mono. Every rupee, noticed.
 
 import { View, Text, Pressable, StyleSheet } from "react-native";
+import { AnimatedRow } from "./AnimatedCard";
 import { colors, getCategoryColor } from "../theme/colors";
 import { formatCurrency, formatDate, formatTime } from "../utils/formatters";
 
@@ -11,10 +12,7 @@ export const ExpenseCard = ({ expense, onEdit, onDelete }) => {
     const hasNote = expense.note && expense.note.trim().length > 0;
 
     return (
-        <Pressable
-            onPress={onEdit}
-            style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
-        >
+        <AnimatedRow onPress={onEdit} style={styles.card}>
             {/* Left: category dot + info */}
             <View style={styles.left}>
                 <View style={[styles.catDot, { backgroundColor: catColor }]} />
@@ -52,7 +50,7 @@ export const ExpenseCard = ({ expense, onEdit, onDelete }) => {
                     </Pressable>
                 </View>
             </View>
-        </Pressable>
+        </AnimatedRow>
     );
 };
 

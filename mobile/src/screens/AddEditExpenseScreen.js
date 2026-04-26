@@ -1,31 +1,43 @@
 // Pica Editorial — AddEditExpenseScreen
-// "New entry" — minimal, focused, like opening a fresh journal page.
-// Category chips, clean underline inputs, amount as the hero.
+// "New entry" — full editorial journal page.
+// REAL custom numpad (matching the HTML design), animated amount, category chips.
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
     View, Text, ScrollView, Alert, StyleSheet, Pressable,
-    TextInput, KeyboardAvoidingView, Platform, TouchableOpacity,
+    TouchableOpacity, KeyboardAvoidingView, Platform, TextInput,
 } from "react-native";
+import Animated, {
+    useSharedValue, useAnimatedStyle,
+    withSpring, withTiming, withSequence, FadeIn, FadeInDown,
+    ZoomIn,
+} from "react-native-reanimated";
 import { useExpenses } from "../context/ExpenseContext";
 import { colors, getCategoryColor } from "../theme/colors";
 import { validateExpense } from "../utils/validators";
 
 const CATEGORIES = [
-    "Food & Dining",
-    "Shopping",
-    "Transport",
-    "Health",
-    "Bills",
-    "Entertainment",
-    "Other",
+    { id: "food",    label: "Food & Dining",    color: colors.coral },
+    { id: "shop",    label: "Shopping",         color: "#5E3A5C" },
+    { id: "trans",   label: "Transport",        color: colors.sage },
+    { id: "health",  label: "Health",           color: colors.gold },
+    { id: "bills",   label: "Bills",            color: colors.rust },
+    { id: "ent",     label: "Entertainment",    color: "#5E3A5C" },
+    { id: "other",   label: "Other",            color: colors.ink3 },
+];
+
+const NUMPAD = [
+    ["1","2","3"],
+    ["4","5","6"],
+    ["7","8","9"],
+    [".","0","⌫"],
 ];
 
 export const AddEditExpenseScreen = ({ route, navigation }) => {
     const existing = route.params?.expense;
     const { addExpense, updateExpense } = useExpenses();
 
-    const [amount, setAmount]     = useState(existing?.amount ? String(existing.amount) : "");
+    const [amtStr, setAmtStr]     = useState(existing?.amount ? String(existing.amount) : "");
     const [category, setCategory] = useState(existing?.category || "");
     const [date, setDate]         = useState(
         existing?.date
@@ -34,133 +46,132 @@ export const AddEditExpenseScreen = ({ route, navigation }) => {
     );
     const [note, setNote]         = useState(existing?.note || "");
     const [submitting, setSubmitting] = useState(false);
-    const [amtFocused, setAmtFocused] = useState(false);
 
-    const isEditing = !!existing;
+    const amtScale  = useSharedValue(1);
+    const saveScale = useSharedValue(1);
+    const cursorOp  = useSharedValue(1);
 
     useEffect(() => {
         navigation.setOptions({ headerShown: false });
+        // Cursor blink
+        const blink = setInterval(() => {
+            cursorOp.value = withSequence(
+                withTiming(0, { duration: 500 }),
+                withTiming(1, { duration: 500 })
+            );
+        }, 1000);
+        return () => clearInterval(blink);
     }, [navigation]);
+
+    const pressKey = useCallback((key) => {
+        if (key === "⌫") {
+            setAmtStr((s) => s.slice(0, -1));
+        } else if (key === ".") {
+            setAmtStr((s) => (s.includes(".") ? s : s + "."));
+        } else {
+            setAmtStr((s) => {
+                if (s === "0") return key;
+                return s + key;
+            });
+        }
+        amtScale.value = withSequence(
+            withSpring(1.06, { damping: 8 }),
+            withSpring(1, { damping: 12 })
+        );
+    }, []);
 
     const onSubmit = async () => {
         const payload = {
-            amount: Number(amount),
+            amount: Number(amtStr),
             category,
             date: new Date(date).toISOString(),
             note,
         };
         const err = validateExpense(payload);
         if (err) { Alert.alert("One more thing", err); return; }
-
         try {
             setSubmitting(true);
-            if (isEditing) await updateExpense(existing._id, payload);
+            saveScale.value = withSpring(0.95, { damping: 10 });
+            if (existing) await updateExpense(existing._id, payload);
             else await addExpense(payload);
             navigation.goBack();
         } catch (e) {
+            saveScale.value = withSpring(1);
             Alert.alert("Couldn't save", e?.response?.data?.message || "Please try again.");
         } finally {
             setSubmitting(false);
         }
     };
 
-    const catColor = getCategoryColor(category);
+    const isEditing  = !!existing;
+    const catColor   = getCategoryColor(category);
+    const displayAmt = amtStr || "0";
+
+    const amtStyle  = useAnimatedStyle(() => ({ transform: [{ scale: amtScale.value }] }));
+    const saveStyle = useAnimatedStyle(() => ({ transform: [{ scale: saveScale.value }] }));
+    const cursorStyle = useAnimatedStyle(() => ({ opacity: cursorOp.value }));
 
     return (
-        <KeyboardAvoidingView
-            style={styles.root}
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-        >
-            {/* Top bar */}
+        <View style={styles.root}>
+            {/* ── Top bar ── */}
             <View style={styles.topBar}>
                 <Pressable onPress={() => navigation.goBack()} style={styles.cancelBtn}>
                     <Text style={styles.cancelText}>Cancel</Text>
                 </Pressable>
                 <Text style={styles.screenTitle}>{isEditing ? "Edit entry" : "New entry"}</Text>
-                <TouchableOpacity onPress={onSubmit} disabled={submitting} style={styles.saveBtn}>
-                    <Text style={[styles.saveText, submitting && styles.saveDisabled]}>
-                        {submitting ? "Saving..." : "Save"}
-                    </Text>
-                </TouchableOpacity>
+                <Animated.View style={saveStyle}>
+                    <TouchableOpacity
+                        onPress={onSubmit}
+                        disabled={submitting}
+                        style={styles.saveBtn}
+                    >
+                        <Text style={[styles.saveText, submitting && { opacity: 0.5 }]}>
+                            {submitting ? "Saving..." : "Save"}
+                        </Text>
+                    </TouchableOpacity>
+                </Animated.View>
             </View>
 
-            <ScrollView
-                style={styles.scroll}
-                contentContainerStyle={styles.scrollContent}
-                keyboardShouldPersistTaps="handled"
-                showsVerticalScrollIndicator={false}
-            >
-                {/* Amount hero — the most important field */}
-                <View style={styles.amtSection}>
-                    <Text style={styles.amtEyebrow}>— Amount</Text>
-                    <View style={[styles.amtRow, amtFocused && styles.amtRowFocused]}>
-                        <Text style={styles.amtCurrency}>₹</Text>
-                        <TextInput
-                            style={styles.amtInput}
-                            value={amount}
-                            onChangeText={setAmount}
-                            keyboardType="decimal-pad"
-                            placeholder="0"
-                            placeholderTextColor={colors.line3}
-                            onFocus={() => setAmtFocused(true)}
-                            onBlur={() => setAmtFocused(false)}
-                            returnKeyType="done"
-                            selectionColor={colors.coral}
+            {/* ── Amount hero ── */}
+            <Animated.View entering={FadeIn.duration(300)} style={styles.amtSection}>
+                <Text style={styles.amtEyebrow}>— Amount —</Text>
+                <Animated.View style={[styles.amtRow, amtStyle]}>
+                    <Text style={styles.amtCur}>₹</Text>
+                    <Text style={styles.amtDisplay}>{displayAmt}</Text>
+                    <Animated.View style={[styles.cursor, cursorStyle]} />
+                </Animated.View>
+            </Animated.View>
+
+            <View style={styles.rule} />
+
+            {/* ── Category chips ── */}
+            <Animated.View entering={FadeInDown.delay(80).duration(400)} style={styles.catSection}>
+                <Text style={styles.fieldLabel}>Category</Text>
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.chipsRow}
+                >
+                    {CATEGORIES.map((cat, idx) => (
+                        <CategoryChip
+                            key={cat.id}
+                            cat={cat}
+                            active={category === cat.label}
+                            onPress={() => setCategory(cat.label)}
+                            delay={idx * 40}
                         />
-                    </View>
-                </View>
+                    ))}
+                </ScrollView>
+            </Animated.View>
 
-                <View style={styles.rule} />
+            <View style={styles.rule} />
 
-                {/* Category chips */}
-                <View style={styles.section}>
-                    <Text style={styles.fieldLabel}>Category</Text>
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={styles.chipsRow}
-                    >
-                        {CATEGORIES.map((cat) => {
-                            const isOn = category === cat;
-                            const chipColor = getCategoryColor(cat);
-                            return (
-                                <Pressable
-                                    key={cat}
-                                    onPress={() => setCategory(cat)}
-                                    style={[
-                                        styles.chip,
-                                        isOn && { backgroundColor: colors.ink, borderColor: colors.ink },
-                                    ]}
-                                >
-                                    {isOn ? (
-                                        <View style={[styles.chipDot, { backgroundColor: chipColor }]} />
-                                    ) : (
-                                        <View style={[styles.chipDot, { backgroundColor: chipColor, opacity: 0.4 }]} />
-                                    )}
-                                    <Text style={[styles.chipText, isOn && styles.chipTextOn]}>
-                                        {cat}
-                                    </Text>
-                                </Pressable>
-                            );
-                        })}
-                    </ScrollView>
-
-                    {/* Custom category fallback */}
-                    {!CATEGORIES.includes(category) && category.length > 0 ? (
-                        <View style={styles.customCatBadge}>
-                            <View style={[styles.chipDot, { backgroundColor: colors.ink3 }]} />
-                            <Text style={styles.customCatText}>{category}</Text>
-                        </View>
-                    ) : null}
-                </View>
-
-                <View style={styles.rule} />
-
-                {/* Date */}
-                <View style={styles.section}>
-                    <Text style={styles.fieldLabel}>Date</Text>
+            {/* ── Meta fields (date, note) ── */}
+            <Animated.View entering={FadeInDown.delay(160).duration(400)} style={styles.metaRow}>
+                <View style={styles.metaField}>
+                    <Text style={styles.metaLabel}>Date</Text>
                     <TextInput
-                        style={styles.fieldInput}
+                        style={styles.metaInput}
                         value={date}
                         onChangeText={setDate}
                         placeholder="YYYY-MM-DD"
@@ -169,47 +180,97 @@ export const AddEditExpenseScreen = ({ route, navigation }) => {
                         selectionColor={colors.coral}
                     />
                 </View>
-
-                <View style={styles.rule} />
-
-                {/* Note */}
-                <View style={styles.section}>
-                    <Text style={styles.fieldLabel}>Note</Text>
+                <View style={styles.metaDivider} />
+                <View style={[styles.metaField, { flex: 2 }]}>
+                    <Text style={styles.metaLabel}>Note</Text>
                     <TextInput
-                        style={[styles.fieldInput, styles.noteInput]}
+                        style={[styles.metaInput, styles.noteInput]}
                         value={note}
                         onChangeText={setNote}
-                        placeholder="A short reflection on this expense..."
+                        placeholder="A short reflection..."
                         placeholderTextColor={colors.ink3}
-                        multiline
-                        numberOfLines={3}
-                        textAlignVertical="top"
                         selectionColor={colors.coral}
+                        returnKeyType="done"
+                        multiline
                     />
                 </View>
+            </Animated.View>
 
-                <View style={styles.rule} />
+            <View style={styles.rule} />
 
-                {/* Summary row */}
-                {amount && category ? (
-                    <View style={styles.summaryRow}>
-                        <View style={[styles.summaryDot, { backgroundColor: catColor }]} />
-                        <Text style={styles.summaryText}>
-                            ₹{amount} · {category}
-                            {note ? ` · "${note.slice(0, 32)}${note.length > 32 ? "…" : ""}"` : ""}
-                        </Text>
+            {/* ── Numpad ── */}
+            <Animated.View entering={FadeInDown.delay(200).duration(400)} style={styles.numpad}>
+                {NUMPAD.map((row, ri) => (
+                    <View key={ri} style={styles.numpadRow}>
+                        {row.map((key) => (
+                            <NumKey key={key} label={key} onPress={() => pressKey(key)} />
+                        ))}
                     </View>
-                ) : null}
-            </ScrollView>
-        </KeyboardAvoidingView>
+                ))}
+            </Animated.View>
+        </View>
+    );
+};
+
+// ── Category chip with spring press ─────────────────────────────────────────
+const CategoryChip = ({ cat, active, onPress, delay }) => {
+    const scale = useSharedValue(1);
+    const style = useAnimatedStyle(() => ({
+        transform: [{ scale: scale.value }],
+        backgroundColor: active ? colors.ink : "transparent",
+        borderColor: active ? colors.ink : colors.line2,
+    }));
+    return (
+        <Animated.View entering={ZoomIn.delay(delay).duration(300)}>
+            <Pressable
+                onPressIn={() => { scale.value = withSpring(0.92, { damping: 10 }); }}
+                onPressOut={() => { scale.value = withSpring(1, { damping: 10 }); }}
+                onPress={onPress}
+            >
+                <Animated.View style={[styles.chip, style]}>
+                    <View style={[styles.chipDot, { backgroundColor: active ? cat.color : cat.color, opacity: active ? 1 : 0.5 }]} />
+                    <Text style={[styles.chipText, active && styles.chipTextOn]}>{cat.label}</Text>
+                </Animated.View>
+            </Pressable>
+        </Animated.View>
+    );
+};
+
+// ── Numpad key with spring animation ─────────────────────────────────────────
+const NumKey = ({ label, onPress }) => {
+    const scale = useSharedValue(1);
+    const bg    = useSharedValue(0);
+    const isSpecial = label === "." || label === "⌫";
+
+    const keyStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: scale.value }],
+        backgroundColor: `rgba(26,24,20,${bg.value * 0.06})`,
+    }));
+
+    return (
+        <Pressable
+            onPressIn={() => {
+                scale.value = withSpring(0.88, { damping: 10, stiffness: 300 });
+                bg.value = withTiming(1, { duration: 80 });
+            }}
+            onPressOut={() => {
+                scale.value = withSpring(1, { damping: 12, stiffness: 200 });
+                bg.value = withTiming(0, { duration: 200 });
+            }}
+            onPress={onPress}
+            style={styles.numKeyWrap}
+        >
+            <Animated.View style={[styles.numKey, keyStyle]}>
+                <Text style={[styles.numKeyText, isSpecial && styles.numKeySpecial]}>
+                    {label}
+                </Text>
+            </Animated.View>
+        </Pressable>
     );
 };
 
 const styles = StyleSheet.create({
-    root: {
-        flex: 1,
-        backgroundColor: colors.paper,
-    },
+    root: { flex: 1, backgroundColor: colors.paper },
 
     // Top bar
     topBar: {
@@ -222,193 +283,114 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: colors.line,
     },
-    cancelBtn: {
-        paddingVertical: 4,
-        minWidth: 60,
-    },
-    cancelText: {
-        fontSize: 14,
-        color: colors.ink3,
-        fontWeight: "500",
-        letterSpacing: 0.1,
-    },
+    cancelBtn: { minWidth: 60, paddingVertical: 4 },
+    cancelText: { fontSize: 14, color: colors.ink3, fontWeight: "500" },
     screenTitle: {
-        fontSize: 15,
-        fontWeight: "600",
-        color: colors.ink,
-        letterSpacing: -0.2,
-        fontStyle: "italic",
+        fontSize: 15, fontWeight: "600", color: colors.ink,
+        letterSpacing: -0.2, fontStyle: "italic",
     },
-    saveBtn: {
-        paddingVertical: 4,
-        minWidth: 60,
-        alignItems: "flex-end",
-    },
-    saveText: {
-        fontSize: 14,
-        color: colors.coral,
-        fontWeight: "700",
-        letterSpacing: 0.1,
-    },
-    saveDisabled: {
-        opacity: 0.5,
-    },
+    saveBtn: { minWidth: 60, alignItems: "flex-end", paddingVertical: 4 },
+    saveText: { fontSize: 14, color: colors.coral, fontWeight: "700", letterSpacing: 0.1 },
 
-    scroll: {
-        flex: 1,
-    },
-    scrollContent: {
-        paddingBottom: 48,
-    },
-
-    // Amount hero
+    // Amount
     amtSection: {
+        alignItems: "center",
+        paddingVertical: 24,
         paddingHorizontal: 24,
-        paddingTop: 28,
-        paddingBottom: 24,
     },
     amtEyebrow: {
-        fontSize: 10,
-        fontWeight: "600",
-        letterSpacing: 1.6,
-        textTransform: "uppercase",
-        color: colors.ink3,
-        marginBottom: 16,
-        textAlign: "center",
+        fontSize: 10, fontWeight: "600", letterSpacing: 1.6,
+        textTransform: "uppercase", color: colors.ink3, marginBottom: 14,
     },
     amtRow: {
         flexDirection: "row",
         alignItems: "flex-start",
         justifyContent: "center",
-        gap: 4,
-        paddingBottom: 8,
-        borderBottomWidth: 1,
-        borderBottomColor: colors.line,
     },
-    amtRowFocused: {
-        borderBottomColor: colors.ink,
-        borderBottomWidth: 1.5,
+    amtCur: {
+        fontSize: 26, color: colors.ink3, fontWeight: "300",
+        marginTop: 10, lineHeight: 34,
     },
-    amtCurrency: {
-        fontSize: 28,
-        color: colors.ink3,
-        fontWeight: "300",
-        marginTop: 12,
-        lineHeight: 36,
+    amtDisplay: {
+        fontSize: 62, fontWeight: "300", color: colors.ink,
+        letterSpacing: -2, lineHeight: 70,
+        fontVariant: ["tabular-nums"], minWidth: 30,
     },
-    amtInput: {
-        fontSize: 64,
-        fontWeight: "300",
-        color: colors.ink,
-        letterSpacing: -2,
-        lineHeight: 72,
-        minWidth: 80,
-        maxWidth: 260,
-        textAlign: "center",
-        fontVariant: ["tabular-nums"],
-        paddingVertical: 0,
-        backgroundColor: "transparent",
+    cursor: {
+        width: 2, height: 44, backgroundColor: colors.coral,
+        marginLeft: 4, marginTop: 14, borderRadius: 1,
     },
 
-    rule: {
-        height: 1,
-        backgroundColor: colors.line,
-        marginHorizontal: 24,
-    },
+    rule: { height: 1, backgroundColor: colors.line },
 
-    section: {
-        paddingHorizontal: 24,
-        paddingVertical: 20,
-    },
+    // Category
+    catSection: { paddingVertical: 16, paddingHorizontal: 24 },
     fieldLabel: {
-        fontSize: 10,
-        fontWeight: "600",
-        letterSpacing: 1.6,
-        textTransform: "uppercase",
-        color: colors.ink3,
-        marginBottom: 14,
+        fontSize: 10, fontWeight: "600", letterSpacing: 1.6,
+        textTransform: "uppercase", color: colors.ink3, marginBottom: 12,
     },
-    fieldInput: {
-        fontSize: 16,
-        color: colors.ink,
-        fontWeight: "400",
-        paddingVertical: 0,
-        letterSpacing: -0.1,
-        backgroundColor: "transparent",
+    chipsRow: { gap: 8, paddingBottom: 4 },
+    chip: {
+        flexDirection: "row", alignItems: "center", gap: 6,
+        paddingVertical: 9, paddingHorizontal: 14,
+        borderRadius: 100, borderWidth: 1,
+    },
+    chipDot: { width: 6, height: 6, borderRadius: 3 },
+    chipText: { fontSize: 12, fontWeight: "500", color: colors.ink2 },
+    chipTextOn: { color: colors.paper },
+
+    // Meta fields
+    metaRow: {
+        flexDirection: "row",
+        paddingVertical: 14,
+        paddingHorizontal: 24,
+        gap: 0,
+        alignItems: "flex-start",
+    },
+    metaField: { flex: 1 },
+    metaDivider: { width: 1, backgroundColor: colors.line, marginHorizontal: 16, height: 44, marginTop: 24 },
+    metaLabel: {
+        fontSize: 9, fontWeight: "600", letterSpacing: 1.6,
+        textTransform: "uppercase", color: colors.ink3, marginBottom: 8,
+    },
+    metaInput: {
+        fontSize: 14, color: colors.ink, fontWeight: "400",
+        paddingVertical: 0, backgroundColor: "transparent",
     },
     noteInput: {
-        fontSize: 15,
-        lineHeight: 24,
-        minHeight: 72,
-        fontStyle: "italic",
-        color: colors.ink2,
-    },
-
-    // Category chips
-    chipsRow: {
-        gap: 8,
-        paddingRight: 4,
-        paddingBottom: 4,
-    },
-    chip: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 6,
-        paddingVertical: 9,
-        paddingHorizontal: 14,
-        borderRadius: 100,
-        borderWidth: 1,
-        borderColor: colors.line2,
-        backgroundColor: "transparent",
-    },
-    chipDot: {
-        width: 6,
-        height: 6,
-        borderRadius: 3,
-    },
-    chipText: {
-        fontSize: 13,
-        fontWeight: "500",
-        color: colors.ink2,
-        letterSpacing: -0.1,
-    },
-    chipTextOn: {
-        color: colors.paper,
-    },
-
-    // Custom category
-    customCatBadge: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 6,
-        marginTop: 10,
-    },
-    customCatText: {
-        fontSize: 13,
-        color: colors.ink3,
-        fontStyle: "italic",
-    },
-
-    // Summary
-    summaryRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 10,
-        paddingHorizontal: 24,
-        paddingTop: 20,
-    },
-    summaryDot: {
-        width: 6,
-        height: 6,
-        borderRadius: 3,
-        flexShrink: 0,
-        marginTop: 1,
-    },
-    summaryText: {
-        fontSize: 13,
-        color: colors.ink3,
-        fontStyle: "italic",
+        fontStyle: "italic", fontSize: 13, color: colors.ink2,
         lineHeight: 20,
+    },
+
+    // Numpad
+    numpad: {
         flex: 1,
+        paddingHorizontal: 8,
+        paddingVertical: 8,
+    },
+    numpadRow: {
+        flexDirection: "row",
+        flex: 1,
+    },
+    numKeyWrap: {
+        flex: 1,
+        padding: 4,
+    },
+    numKey: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 14,
+    },
+    numKeyText: {
+        fontSize: 24,
+        fontWeight: "400",
+        color: colors.ink,
+        letterSpacing: -0.5,
+    },
+    numKeySpecial: {
+        fontSize: 16,
+        fontWeight: "600",
+        color: colors.ink3,
     },
 });
