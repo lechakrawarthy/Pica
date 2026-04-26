@@ -3,7 +3,9 @@
 // Numbers as literature. Pace tracking. Insight card.
 
 import { useMemo, useEffect, useState, useCallback } from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import { View, Text, ScrollView, StyleSheet, Dimensions } from "react-native";
+
+const TRACK_W = Dimensions.get("window").width - 48; // paddingHorizontal 24 each side
 import { useFocusEffect } from "@react-navigation/native";
 import Animated, {
     useSharedValue, useAnimatedStyle,
@@ -86,7 +88,7 @@ export const DashboardScreen = () => {
         barWidth.value = withDelay(400, withTiming(budgetUsedPct, { duration: 900, easing: Easing.out(Easing.cubic) }));
     }, [budgetUsedPct]);
     const barStyle = useAnimatedStyle(() => ({
-        width: `${barWidth.value}%`,
+        width: (barWidth.value / 100) * TRACK_W,
     }));
 
     const firstName = user?.name?.split(" ")[0] || "there";

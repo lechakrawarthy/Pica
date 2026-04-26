@@ -14,6 +14,7 @@ import Animated, {
     withSpring,
     interpolate,
     useAnimatedScrollHandler,
+    runOnJS,
     Extrapolation,
     FadeIn,
     FadeInDown,
@@ -63,9 +64,9 @@ export const OnboardingScreen = ({ onFinish, onSkip }) => {
         onScroll: (e) => {
             scrollX.value = e.contentOffset.x;
         },
-        onMomentumEnd: (e) => {
+        onMomentumScrollEnd: (e) => {
             const idx = Math.round(e.contentOffset.x / W);
-            setActiveIndex(idx);
+            runOnJS(setActiveIndex)(idx);
         },
     });
 
@@ -169,14 +170,14 @@ const DotIndicator = ({ index, scrollX }) => {
         const inputRange = [(index - 1) * W, index * W, (index + 1) * W];
         const width  = interpolate(scrollX.value, inputRange, [18, 28, 18], Extrapolation.CLAMP);
         const opacity = interpolate(scrollX.value, inputRange, [0.3, 1, 0.3], Extrapolation.CLAMP);
-        const bgOpacity = interpolate(scrollX.value, inputRange, [0, 1, 0], Extrapolation.CLAMP);
         return { width, opacity };
     });
 
     const fillStyle = useAnimatedStyle(() => {
         const inputRange = [(index - 1) * W, index * W, (index + 1) * W];
-        const widthPct = interpolate(scrollX.value, inputRange, [0, 100, 0], Extrapolation.CLAMP);
-        return { width: `${widthPct}%` };
+        // Animate pixel width directly (dot container is 18–28px wide)
+        const fillW = interpolate(scrollX.value, inputRange, [0, 28, 0], Extrapolation.CLAMP);
+        return { width: fillW };
     });
 
     return (

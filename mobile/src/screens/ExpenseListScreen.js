@@ -129,7 +129,7 @@ export const ExpenseListScreen = ({ navigation }) => {
                     keyExtractor={(item) => item.id || item._id}
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={styles.listContent}
-                    itemLayoutAnimation={Layout.springify().damping(14)}
+                    itemLayoutAnimation={Layout.springify()}
                     renderItem={({ item, index }) => {
                         if (item.type === "header") {
                             return (

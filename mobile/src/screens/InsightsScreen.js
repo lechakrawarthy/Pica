@@ -245,7 +245,10 @@ const DayBar = ({ item, maxVal, index, isToday }) => {
 // ── Animated category row ─────────────────────────────────────────────────────
 const AnimatedCategoryRow = ({ item, index }) => {
     const barW = useSharedValue(0);
-    const style = useAnimatedStyle(() => ({ width: `${barW.value}%` }));
+    const trackWidth = useSharedValue(0);
+    const style = useAnimatedStyle(() => ({
+        width: (barW.value / 100) * trackWidth.value,
+    }));
 
     useEffect(() => {
         barW.value = withDelay(
@@ -263,7 +266,10 @@ const AnimatedCategoryRow = ({ item, index }) => {
                     <Text style={cStyles.pct}>{Math.round(item.pct)}%</Text>
                     <Text style={cStyles.amt}>{formatCurrency(item.amt)}</Text>
                 </View>
-                <View style={cStyles.track}>
+                <View
+                    style={cStyles.track}
+                    onLayout={(e) => { trackWidth.value = e.nativeEvent.layout.width; }}
+                >
                     <Animated.View style={[cStyles.fill, style, { backgroundColor: item.color }]} />
                 </View>
             </View>
