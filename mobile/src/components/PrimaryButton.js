@@ -1,4 +1,4 @@
-// Spendly Editorial — PrimaryButton
+// Pica Editorial — PrimaryButton
 // Pill-shaped, ink-filled. One decisive action per screen.
 
 import { Pressable, Text, ActivityIndicator, StyleSheet, View } from "react-native";

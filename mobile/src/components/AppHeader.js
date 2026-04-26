@@ -1,4 +1,4 @@
-// Spendly Editorial — AppHeader
+// Pica Editorial — AppHeader
 // A minimal mark + wordmark bar. No gradients, just paper and ink.
 
 import { View, Text, StyleSheet, Pressable } from "react-native";

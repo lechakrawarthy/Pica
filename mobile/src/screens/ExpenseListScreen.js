@@ -1,4 +1,4 @@
-// Spendly Editorial — ExpenseListScreen (Journal)
+// Pica Editorial — ExpenseListScreen (Journal)
 // Your money, kept like a journal. Chronological, readable, personal.
 
 import { useCallback } from "react";
@@ -77,7 +77,7 @@ export const ExpenseListScreen = ({ navigation }) => {
             <View style={styles.topBar}>
                 <View style={styles.markRow}>
                     <View style={styles.mark}><View style={styles.markDot} /></View>
-                    <Text style={styles.brandName}>Spendly</Text>
+                    <Text style={styles.brandName}>Pica</Text>
                 </View>
                 <Pressable onPress={logout} style={styles.logoutBtn}>
                     <Text style={styles.logoutText}>Sign out</Text>

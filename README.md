@@ -1,4 +1,4 @@
-# Spendly - Expense Tracker App
+# Pica - Expense Tracker App
 
 Full-stack expense tracker built with:
 - React Native (Expo)
@@ -35,8 +35,11 @@ npm install
 3. Create `.env` from `.env.example` and update values:
 ```env
 PORT=5000
-MONGO_URI=mongodb://127.0.0.1:27017/spendly
+MONGO_URI=mongodb://127.0.0.1:27017/pica
 JWT_SECRET=your_super_secret_key
+DEMO_EMAIL=demo@pica.app
+DEMO_PASSWORD=Pica@12345
+DEMO_NAME=Pica Demo
 ```
 
 4. Run API in dev mode:
@@ -50,6 +53,10 @@ npm test
 ```
 
 API base URL: `http://localhost:5000/api`
+
+Demo credentials (auto-created at backend startup):
+- Email: `demo@pica.app`
+- Password: `Pica@12345`
 
 ## API Endpoints
 

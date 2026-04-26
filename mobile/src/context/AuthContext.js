@@ -4,6 +4,16 @@ import { client } from "../api/client";
 
 const AuthContext = createContext(null);
 
+const toReadableAuthError = (error) => {
+    if (error?.response?.data?.message) {
+        return error.response.data.message;
+    }
+    if (error?.code === "ECONNABORTED" || error?.message?.includes("Network Error")) {
+        return "Cannot reach API server. Ensure backend is running on port 5000.";
+    }
+    return "Authentication failed. Please try again.";
+};
+
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(null);
@@ -47,36 +57,48 @@ export const AuthProvider = ({ children }) => {
 
     const register = async ({ name, email, password }) => {
         setAuthError(null);
-        const response = await client.post("/auth/register", { name, email, password });
-        const nextSession = {
-            user: {
-                _id: response.data._id,
-                name: response.data.name,
-                email: response.data.email,
-            },
-            token: response.data.token,
-        };
+        try {
+            const response = await client.post("/auth/register", { name, email, password });
+            const nextSession = {
+                user: {
+                    _id: response.data._id,
+                    name: response.data.name,
+                    email: response.data.email,
+                },
+                token: response.data.token,
+            };
 
-        setUser(nextSession.user);
-        setToken(nextSession.token);
-        await persistSession(nextSession);
+            setUser(nextSession.user);
+            setToken(nextSession.token);
+            await persistSession(nextSession);
+        } catch (error) {
+            const message = toReadableAuthError(error);
+            setAuthError(message);
+            throw new Error(message);
+        }
     };
 
     const login = async ({ email, password }) => {
         setAuthError(null);
-        const response = await client.post("/auth/login", { email, password });
-        const nextSession = {
-            user: {
-                _id: response.data._id,
-                name: response.data.name,
-                email: response.data.email,
-            },
-            token: response.data.token,
-        };
+        try {
+            const response = await client.post("/auth/login", { email, password });
+            const nextSession = {
+                user: {
+                    _id: response.data._id,
+                    name: response.data.name,
+                    email: response.data.email,
+                },
+                token: response.data.token,
+            };
 
-        setUser(nextSession.user);
-        setToken(nextSession.token);
-        await persistSession(nextSession);
+            setUser(nextSession.user);
+            setToken(nextSession.token);
+            await persistSession(nextSession);
+        } catch (error) {
+            const message = toReadableAuthError(error);
+            setAuthError(message);
+            throw new Error(message);
+        }
     };
 
     const logout = async () => {

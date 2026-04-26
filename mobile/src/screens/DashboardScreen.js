@@ -1,4 +1,4 @@
-// Spendly Editorial — DashboardScreen (Home)
+// Pica Editorial — DashboardScreen (Home)
 // The financial overview. Numbers as literature. Budget bar, category breakdown,
 // daily avg, pace tracking. All in paper and ink.
 
@@ -45,14 +45,14 @@ export const DashboardScreen = () => {
     );
 
     const budgetUsedPct = Math.min((totalSpend / MONTHLY_BUDGET) * 100, 100);
-    const budgetLeft    = Math.max(MONTHLY_BUDGET - totalSpend, 0);
-    const day           = dayOfMonth();
-    const days          = daysInMonth();
-    const daysLeft      = days - day;
-    const dailyAvg      = day > 0 ? totalSpend / day : 0;
-    const dailyBudget   = daysLeft > 0 ? budgetLeft / daysLeft : 0;
-    const paceStatus    = budgetUsedPct / ((day / days) * 100);
-    const isOnTrack     = paceStatus <= 1.1;
+    const budgetLeft = Math.max(MONTHLY_BUDGET - totalSpend, 0);
+    const day = dayOfMonth();
+    const days = daysInMonth();
+    const daysLeft = days - day;
+    const dailyAvg = day > 0 ? totalSpend / day : 0;
+    const dailyBudget = daysLeft > 0 ? budgetLeft / daysLeft : 0;
+    const paceStatus = budgetUsedPct / ((day / days) * 100);
+    const isOnTrack = paceStatus <= 1.1;
 
     // Category totals
     const catTotals = useMemo(() => {
@@ -78,7 +78,7 @@ export const DashboardScreen = () => {
     );
 
     const firstName = user?.name?.split(" ")[0] || "there";
-    const greeting  = getGreeting();
+    const greeting = getGreeting();
 
     return (
         <View style={styles.root}>
@@ -86,7 +86,7 @@ export const DashboardScreen = () => {
             <View style={styles.topBar}>
                 <View style={styles.markRow}>
                     <View style={styles.mark}><View style={styles.markDot} /></View>
-                    <Text style={styles.brandName}>Spendly</Text>
+                    <Text style={styles.brandName}>Pica</Text>
                 </View>
                 <View style={styles.monthBadge}>
                     <Text style={styles.monthBadgeText}>{monthLabel()}</Text>
@@ -321,10 +321,10 @@ const styles = StyleSheet.create({
         borderRadius: 100, borderWidth: 1,
     },
     paceGood: { borderColor: colors.sage, backgroundColor: "rgba(90,107,74,0.06)" },
-    paceBad:  { borderColor: colors.coral, backgroundColor: "rgba(232,85,58,0.06)" },
+    paceBad: { borderColor: colors.coral, backgroundColor: "rgba(232,85,58,0.06)" },
     paceText: { fontSize: 10, fontWeight: "700", letterSpacing: 0.4 },
     paceGoodText: { color: colors.sage },
-    paceBadText:  { color: colors.coral },
+    paceBadText: { color: colors.coral },
 
     balanceAmtRow: {
         flexDirection: "row", alignItems: "flex-start", gap: 4, marginBottom: 18,

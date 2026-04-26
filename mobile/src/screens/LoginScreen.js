@@ -1,4 +1,4 @@
-// Spendly Editorial — LoginScreen
+// Pica Editorial — LoginScreen
 // "Welcome back. Pick up where you left off."
 // Paper background, ink form fields, coral CTA.
 
@@ -23,7 +23,20 @@ export const LoginScreen = ({ navigation }) => {
             setSubmitting(true);
             await login({ email, password });
         } catch (e) {
-            Alert.alert("Couldn't sign in", e?.response?.data?.message || "Double-check your email and password.");
+            Alert.alert("Couldn't sign in", e?.message || "Double-check your email and password.");
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const onUseDemo = async () => {
+        try {
+            setSubmitting(true);
+            setEmail("demo@pica.app");
+            setPassword("Pica@12345");
+            await login({ email: "demo@pica.app", password: "Pica@12345" });
+        } catch (e) {
+            Alert.alert("Demo login failed", e?.message || "Start backend server and try again.");
         } finally {
             setSubmitting(false);
         }
@@ -44,7 +57,7 @@ export const LoginScreen = ({ navigation }) => {
                     <View style={styles.mark}>
                         <View style={styles.markDot} />
                     </View>
-                    <Text style={styles.brandName}>Spendly</Text>
+                    <Text style={styles.brandName}>Pica</Text>
                 </View>
 
                 {/* Hero copy */}
@@ -91,6 +104,13 @@ export const LoginScreen = ({ navigation }) => {
                     loading={submitting}
                 />
 
+                <PrimaryButton
+                    title="Use demo account"
+                    onPress={onUseDemo}
+                    disabled={submitting}
+                    variant="ghost"
+                />
+
                 {/* Switch link */}
                 <View style={styles.switchRow}>
                     <Text style={styles.switchText}>No account yet?</Text>
@@ -101,7 +121,7 @@ export const LoginScreen = ({ navigation }) => {
 
                 {/* Footer quote */}
                 <Text style={styles.footer}>
-                    "Every rupee, noticed." — Spendly
+                    "Every rupee, noticed." — Pica
                 </Text>
             </ScrollView>
         </KeyboardAvoidingView>
@@ -202,7 +222,7 @@ const styles = StyleSheet.create({
     switchRow: {
         flexDirection: "row",
         justifyContent: "center",
-        marginTop: 20,
+        marginTop: 14,
     },
     switchText: {
         fontSize: 13,

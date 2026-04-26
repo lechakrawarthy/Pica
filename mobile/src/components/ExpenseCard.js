@@ -1,4 +1,4 @@
-// Spendly Editorial — ExpenseCard
+// Pica Editorial — ExpenseCard
 // Journal entry style. Category dot, merchant name in serif weight,
 // amount in tabular mono. Every rupee, noticed.
 

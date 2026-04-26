@@ -1,4 +1,4 @@
-// Spendly Editorial — FormField
+// Pica Editorial — FormField
 // Borderless underline inputs. Clean, minimal, journalistic.
 
 import { useState } from "react";

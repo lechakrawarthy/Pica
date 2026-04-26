@@ -1,4 +1,4 @@
-// Spendly Editorial Design System — Color Palette
+// Pica Editorial Design System — Color Palette
 // Philosophy: paper, ink, one decisive coral. Earth-toned. Literary.
 
 export const colors = {

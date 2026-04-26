@@ -1,4 +1,4 @@
-// Spendly Editorial — RegisterScreen
+// Pica Editorial — RegisterScreen
 // "Begin quietly." Warm, welcoming, no noise.
 
 import { useState } from "react";
@@ -23,7 +23,7 @@ export const RegisterScreen = ({ navigation }) => {
             setSubmitting(true);
             await register({ name, email, password });
         } catch (e) {
-            Alert.alert("Couldn't create account", e?.response?.data?.message || "Please try again in a moment.");
+            Alert.alert("Couldn't create account", e?.message || "Please try again in a moment.");
         } finally {
             setSubmitting(false);
         }
@@ -44,7 +44,7 @@ export const RegisterScreen = ({ navigation }) => {
                     <View style={styles.mark}>
                         <View style={styles.markDot} />
                     </View>
-                    <Text style={styles.brandName}>Spendly</Text>
+                    <Text style={styles.brandName}>Pica</Text>
                 </View>
 
                 {/* Hero copy */}

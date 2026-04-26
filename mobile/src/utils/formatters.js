@@ -1,4 +1,4 @@
-// Spendly — Formatters
+// Pica — Formatters
 // Indian Rupee, Indian date format, clean locale strings.
 
 export const formatCurrency = (value) => {

@@ -1,4 +1,4 @@
-// Spendly Editorial Typography System
+// Pica Editorial Typography System
 // Fraunces-inspired editorial feel using system fonts
 // (swap fontFamily strings once expo-font loads custom fonts)
 

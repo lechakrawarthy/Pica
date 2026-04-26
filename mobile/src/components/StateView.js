@@ -1,4 +1,4 @@
-// Spendly Editorial — StateView
+// Pica Editorial — StateView
 // Quiet, literary empty and error states. No screaming icons.
 
 import { View, Text, ActivityIndicator, Pressable, StyleSheet } from "react-native";

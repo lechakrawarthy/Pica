@@ -1,4 +1,4 @@
-// Spendly Editorial — RootNavigator
+// Pica Editorial — RootNavigator
 // Paper-and-ink navigation theme. Clean tab bar, no clutter.
 
 import { View, Text, StyleSheet } from "react-native";
@@ -22,12 +22,12 @@ const navTheme = {
     ...DefaultTheme,
     colors: {
         ...DefaultTheme.colors,
-        background:  colors.paper,
-        card:        colors.paper,
-        text:        colors.ink,
-        border:      colors.line,
-        primary:     colors.coral,
-        notification:colors.coral,
+        background: colors.paper,
+        card: colors.paper,
+        text: colors.ink,
+        border: colors.line,
+        primary: colors.coral,
+        notification: colors.coral,
     },
 };
 
@@ -45,13 +45,13 @@ const TabIcon = ({ name, focused }) => {
 };
 
 const ti = StyleSheet.create({
-    stack:       { gap: 4, alignItems: "flex-start", width: 18 },
-    line:        { height: 1.5, width: 18, backgroundColor: colors.ink, borderRadius: 1 },
-    lineShort:   { height: 1.5, width: 12, backgroundColor: colors.ink, borderRadius: 1 },
-    lineMuted:   { backgroundColor: colors.ink3 },
-    square:      { width: 16, height: 16, borderWidth: 1.5, borderColor: colors.ink, borderRadius: 4, alignItems: "center", justifyContent: "center" },
+    stack: { gap: 4, alignItems: "flex-start", width: 18 },
+    line: { height: 1.5, width: 18, backgroundColor: colors.ink, borderRadius: 1 },
+    lineShort: { height: 1.5, width: 12, backgroundColor: colors.ink, borderRadius: 1 },
+    lineMuted: { backgroundColor: colors.ink3 },
+    square: { width: 16, height: 16, borderWidth: 1.5, borderColor: colors.ink, borderRadius: 4, alignItems: "center", justifyContent: "center" },
     squareMuted: { borderColor: colors.ink3 },
-    squareDot:   { width: 5, height: 5, borderRadius: 2.5, backgroundColor: colors.coral },
+    squareDot: { width: 5, height: 5, borderRadius: 2.5, backgroundColor: colors.coral },
 });
 
 // Custom tab bar label
@@ -126,7 +126,7 @@ export const RootNavigator = () => {
                 <View style={loadStyles.mark}>
                     <View style={loadStyles.dot} />
                 </View>
-                <Text style={loadStyles.name}>Spendly</Text>
+                <Text style={loadStyles.name}>Pica</Text>
                 <Text style={loadStyles.hint}>Reading your journal...</Text>
             </View>
         );

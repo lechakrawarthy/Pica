@@ -1,4 +1,4 @@
-// Spendly Editorial — AddEditExpenseScreen
+// Pica Editorial — AddEditExpenseScreen
 // "New entry" — minimal, focused, like opening a fresh journal page.
 // Category chips, clean underline inputs, amount as the hero.
 
