@@ -60,7 +60,7 @@ Gallery (click to open full-size):
 
 _All images live in_ `mobile/assets/README-images/`.
 
-I've replaced the inline images with linked thumbnails below so GitHub preserves aspect ratio and lets reviewers open full-size images.
+
 
 <p>
   <a href="mobile/assets/README-images/pica_splash_screen.jpeg"><img src="mobile/assets/README-images/pica_splash_screen.jpeg" width="300" /></a>
