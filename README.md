@@ -43,21 +43,6 @@ Cold launch
 ---
 
 ## Screenshots
-
-Gallery (click to open full-size):
-
-<p float="left">
-  <img src="mobile/assets/README-images/pica_splash_screen.jpeg" width="220" />
-  <img src="mobile/assets/README-images/onboarding_screen_1_pica.jpeg" width="220" />
-  <img src="mobile/assets/README-images/onboarding_screen_2_pica.jpeg" width="220" />
-  <img src="mobile/assets/README-images/onboarding_screen_3_pica.jpeg" width="220" />
-  <img src="mobile/assets/README-images/home_pica.jpeg" width="220" />
-  <img src="mobile/assets/README-images/new_log_entry_pica.jpeg" width="220" />
-  <img src="mobile/assets/README-images/expense_list.jpeg" width="220" />
-  <img src="mobile/assets/README-images/insights_pia.jpeg" width="220" />
-  <img src="mobile/assets/README-images/profile_pica.jpeg" width="220" />
-</p>
-
 _All images live in_ `mobile/assets/README-images/`.
 
 
