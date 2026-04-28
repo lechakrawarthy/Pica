@@ -44,22 +44,23 @@ Cold launch
 
 ## Screenshots
 
+Gallery (click to open full-size):
+
 <p float="left">
-  <img src="mobile/assets/README-images/onboarding.jpeg" width="240" />
-  <img src="mobile/assets/README-images/dashboard.jpeg" width="240" />
-  <img src="mobile/assets/README-images/add_expense.jpeg" width="240" />
+  <img src="mobile/assets/README-images/onboarding.jpeg" width="220" />
+  <img src="mobile/assets/README-images/dashboard.jpeg" width="220" />
+  <img src="mobile/assets/README-images/add_expense.jpeg" width="220" />
+  <img src="mobile/assets/README-images/insights.jpeg" width="220" />
+  <img src="mobile/assets/README-images/expense_list.jpeg" width="220" />
+  <img src="mobile/assets/README-images/budget_setup.jpeg" width="220" />
+  <img src="mobile/assets/README-images/whatsapp-2026-04-28-22-37-28.jpeg" width="220" />
+  <img src="mobile/assets/README-images/whatsapp-2026-04-28-22-37-29-1.jpeg" width="220" />
+  <img src="mobile/assets/README-images/whatsapp-2026-04-28-22-37-29.jpeg" width="220" />
+  <img src="mobile/assets/README-images/whatsapp-2026-04-28-22-37-30-1.jpeg" width="220" />
+  <img src="mobile/assets/README-images/whatsapp-2026-04-28-22-37-30.jpeg" width="220" />
 </p>
 
-_More screenshots are available in_ `mobile/assets/README-images/`.
-
-Captions:
-
-- **Onboarding** — three story slides that introduce the app
-- **Dashboard** — spending hero, animated budget bar and category breakdown
-- **Add expense** — custom number pad and quick entry UI
-- **Insights** — weekly spend chart and top categories
-- **Expense list** — journal-style grouped entries (Today / Yesterday)
-- **Budget setup** — drag slider and preset chips for quick setup
+_All images live in_ `mobile/assets/README-images/`. Rename any `whatsapp-*` files to descriptive names if you'd like — tell me the target names and I will update both filenames and captions.
 
 
 ## Project Structure
