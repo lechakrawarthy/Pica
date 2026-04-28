@@ -60,6 +60,32 @@ Gallery (click to open full-size):
 
 _All images live in_ `mobile/assets/README-images/`.
 
+I've replaced the inline images with linked thumbnails below so GitHub preserves aspect ratio and lets reviewers open full-size images.
+
+<p>
+  <a href="mobile/assets/README-images/pica_splash_screen.jpeg"><img src="mobile/assets/README-images/pica_splash_screen.jpeg" width="300" /></a>
+  <a href="mobile/assets/README-images/onboarding_screen_1_pica.jpeg"><img src="mobile/assets/README-images/onboarding_screen_1_pica.jpeg" width="300" /></a>
+  <a href="mobile/assets/README-images/onboarding_screen_2_pica.jpeg"><img src="mobile/assets/README-images/onboarding_screen_2_pica.jpeg" width="300" /></a>
+</p>
+
+**Onboarding / Splash** — first-run experience and splash mark.
+
+<p>
+  <a href="mobile/assets/README-images/onboarding_screen_3_pica.jpeg"><img src="mobile/assets/README-images/onboarding_screen_3_pica.jpeg" width="300" /></a>
+  <a href="mobile/assets/README-images/home_pica.jpeg"><img src="mobile/assets/README-images/home_pica.jpeg" width="300" /></a>
+  <a href="mobile/assets/README-images/new_log_entry_pica.jpeg"><img src="mobile/assets/README-images/new_log_entry_pica.jpeg" width="300" /></a>
+</p>
+
+**Dashboard / Add entry** — home screen, quick entry UI.
+
+<p>
+  <a href="mobile/assets/README-images/expense_list.jpeg"><img src="mobile/assets/README-images/expense_list.jpeg" width="300" /></a>
+  <a href="mobile/assets/README-images/insights_pia.jpeg"><img src="mobile/assets/README-images/insights_pia.jpeg" width="300" /></a>
+  <a href="mobile/assets/README-images/profile_pica.jpeg"><img src="mobile/assets/README-images/profile_pica.jpeg" width="300" /></a>
+</p>
+
+**Expense list / Insights / Profile** — journal view, charts, profile.
+
 
 ## Project Structure
 
