@@ -41,7 +41,7 @@ const OAuthButton = ({ label, icon, onPress, delay = 0 }) => {
 
 export const LoginScreen = ({ navigation }) => {
     const { login } = useAuth();
-    const [email, setEmail]       = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [submitting, setSubmitting] = useState(false);
 
@@ -148,12 +148,21 @@ export const LoginScreen = ({ navigation }) => {
                     onPress={() => Alert.alert("Coming soon", "Apple sign-in is coming in the next release.")}
                     delay={480}
                 />
-                <OAuthButton
-                    label="Try demo account"
-                    icon="◉"
-                    onPress={onDemoLogin}
-                    delay={540}
-                />
+                {__DEV__ ? (
+                    <OAuthButton
+                        label="Try demo account"
+                        icon="◉"
+                        onPress={onDemoLogin}
+                        delay={540}
+                    />
+                ) : (
+                    <OAuthButton
+                        label="Try demo account"
+                        icon="◉"
+                        onPress={() => Alert.alert("Coming soon", "Demo account is not available in the production app. It will be enabled in a future release.")}
+                        delay={540}
+                    />
+                )}
 
                 {/* Switch */}
                 <Animated.View entering={FadeInDown.delay(580).duration(400)} style={styles.switchRow}>
