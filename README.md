@@ -42,6 +42,26 @@ Cold launch
 
 ---
 
+## Screenshots
+
+<p float="left">
+  <img src="mobile/assets/README-images/onboarding.jpeg" width="240" />
+  <img src="mobile/assets/README-images/dashboard.jpeg" width="240" />
+  <img src="mobile/assets/README-images/add_expense.jpeg" width="240" />
+</p>
+
+_More screenshots are available in_ `mobile/assets/README-images/`.
+
+Captions:
+
+- **Onboarding** — three story slides that introduce the app
+- **Dashboard** — spending hero, animated budget bar and category breakdown
+- **Add expense** — custom number pad and quick entry UI
+- **Insights** — weekly spend chart and top categories
+- **Expense list** — journal-style grouped entries (Today / Yesterday)
+- **Budget setup** — drag slider and preset chips for quick setup
+
+
 ## Project Structure
 
 ```
